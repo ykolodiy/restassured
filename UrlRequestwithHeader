@@ -47,19 +47,28 @@ public class NewTest2 {
 
 		    // Read response
 		    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		    StringBuffer jsonString = new StringBuffer();
-		    String line;
-		    while ((line = br.readLine()) != null) {
-		        jsonString.append(line);
-		    }
-		    br.close();
-		    System.out.println(jsonString);
+		    
+		    String jsonText = readAll(br);
+		      JSONObject json = new JSONObject(jsonText);
+		    
+		   		    br.close();
+		  		    
+		    System.out.println("json: "+json);
 		    conn.disconnect();
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
 	  
   }
+  
+  private static String readAll(Reader rd) throws IOException {
+	    StringBuilder sb = new StringBuilder();
+	    int cp;
+	    while ((cp = rd.read()) != -1) {
+	      sb.append((char) cp);
+	    }
+	    return sb.toString();
+	  }
   
 
 }
