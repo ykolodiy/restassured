@@ -1,0 +1,79 @@
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+
+import java.nio.charset.Charset;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+
+
+public class ApiCall {
+
+	public static void main(String[] args) throws JSONException, IOException {
+		try {
+
+			String request = "https://grainger--INT.my.salesforce.com//services/data/v48.0/query?q=SELECT+Id+,+...";
+			
+			
+		    URL url = new URL(request);
+		    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		    // Set Headers
+		    conn.setRequestProperty("Content-Type", "application/json");
+		    conn.setRequestProperty("Authorization", "Bearer sessionidhere");
+
+
+		    // Request not successful
+		    if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+		        throw new RuntimeException("Request Failed. HTTP Error Code: " + conn.getResponseCode());
+		    }
+
+		    // Read response
+		    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		    
+		    String jsonText = readAll(br);
+		      JSONObject json = new JSONObject(jsonText);
+		    
+		   		    br.close();
+		  		    
+		    System.out.println("json: "+json);
+		    
+		    // json.getJSONArray("content").getJSONObject(0).getString("article")
+
+		    System.out.println("json: "+json.get("done"));
+		    System.out.println("url: "+json.getJSONArray("records").getJSONObject(0).getJSONObject("attributes").getString("url"));
+		    System.out.println("Id: "+json.getJSONArray("records").getJSONObject(0).getString("Id"));
+
+		    
+		    
+		    conn.disconnect();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+
+	}
+	
+	
+	
+	 private static String readAll(Reader rd) throws IOException {
+		    StringBuilder sb = new StringBuilder();
+		    int cp;
+		    while ((cp = rd.read()) != -1) {
+		      sb.append((char) cp);
+		    }
+		    return sb.toString();
+		  }
+	 
+
+}
